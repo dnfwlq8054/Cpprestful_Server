@@ -32,11 +32,11 @@ int main(){
 
 	});
 
-    	SQL_info mariaID;
-    	mariaID.server = "localhost";
-    	mariaID.user = "root";
-    	mariaID.password = "root";
-    	mariaID.database = "test";
+    SQL_info mariaID;
+    mariaID.server = "localhost";
+    mariaID.user = "root";
+    mariaID.password = "root";
+    mariaID.database = "test";
 	
 	std::vector<utility::string_t> mytable_list;
 	mytable_list.emplace_back("id");
@@ -53,5 +53,5 @@ int main(){
 	start_server(url, listen_config, mariaID, mytable_list);
 	while(true);
 	listener->close().wait();
-    	return 0;
+    return 0;
 }

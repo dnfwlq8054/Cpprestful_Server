@@ -114,7 +114,7 @@ void Handler::handle_put(http_request request){     //Serialize the json data re
     
     std::cout << "handle_put request" << std::endl;
    
-    std::string input_list[6];
+    std::vector<std::string> input_list(list.size());
     auto j = request.extract_json().get();
 
     for(size_t i = 0; i < j.size(); i++){
@@ -124,7 +124,13 @@ void Handler::handle_put(http_request request){     //Serialize the json data re
         input_list[i].pop_back();
     }
 
-    std::string insert_cmd = "INSERT INTO table1(id, name, start_year, end_year, img, text) VALUES ("+input_list[0]+", '"+input_list[1]+"', '"+input_list[2]+"', '"+input_list[3]+"', '"+input_list[4]+"', '"+input_list[5]+"')";
+    std::string insert_cmd = "INSERT INTO table1(id, name, start_year, end_year, img, text) VALUES (" + input_list[0]+ ",";
+    for(size_t i = 1; i < list.size(); i++)
+        insert_cmd += "'" + input_list[i] + "', ";
+
+    insert_cmd.pop_back(); insert_cmd.pop_back();
+    insert_cmd += ")";
+    
     if(!mysql_query(Connect_maria, insert_cmd.c_str())){
     
         std::cout << "database insert complete" << std::endl;
