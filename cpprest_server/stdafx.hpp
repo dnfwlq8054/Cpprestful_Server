@@ -14,22 +14,17 @@ using namespace web::http;
 using namespace utility;
 using namespace web::http::experimental::listener;
 
-typedef struct connection_details {
+typedef struct connection_details {  
     const char *server;
     const char *user;
     const char *password;
     const char *database;
 }SQL_info;
 
-namespace mariaDB_table_list
-{
-    utility::string_t mytable_list[6] = { "id", "name", "start_year", "end_year", "img", "text" };
-}
-
 class Handler{
 public:
     Handler() {};
-    Handler(utility::string_t url, http_listener_config config, SQL_info myDB);
+    Handler(utility::string_t url, http_listener_config config, SQL_info myDB, std::vector<utility::string_t> mytable_list);
     ~Handler() { mysql_close(Connect_maria); };
 
     pplx::task<void> open() { return m_listener.open(); }
@@ -46,6 +41,7 @@ private:
 private:
     http_listener m_listener;
     MYSQL *Connect_maria;
+    std::vector<utility::string_t> list;
 };
 
 

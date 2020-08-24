@@ -2,8 +2,9 @@
 
 std::unique_ptr<Handler> listener;
 
-void start_server(utility::string_t& url, http_listener_config config, SQL_info myDB){
-	listener = std::unique_ptr<Handler>(new Handler(url, config, myDB));
+void start_server(utility::string_t& url, http_listener_config config, SQL_info myDB, std::vector<utility::string_t>& mytable_list){
+
+	listener = std::unique_ptr<Handler>(new Handler(url, config, myDB, mytable_list));
 	std::cout << "start server" << std::endl;
 	listener->open().wait();
 }
@@ -35,11 +36,20 @@ int main(){
     mariaID.user = "root";
     mariaID.password = "root";
     mariaID.database = "test";
+	
+	std::vector<utility::string_t> mytable_list;
+	mytable_list.emplace_back("id");
+	mytable_list.emplace_back("name");
+	mytable_list.emplace_back("start_year");
+	mytable_list.emplace_back("end_year");
+	mytable_list.emplace_back("img");
+	mytable_list.emplace_back("text");
+
   
 	listen_config.set_timeout(utility::seconds(10));
 	utility::string_t url = U("http://0.0.0.0:10022");        
 
-	start_server(url, listen_config, mariaID);
+	start_server(url, listen_config, mariaID, mytable_list);
 	while(true);
 	listener->close().wait();
     return 0;

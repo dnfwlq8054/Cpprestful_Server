@@ -1,8 +1,7 @@
 #include "stdafx.hpp"
 
-using namespace mariaDB_table_list;
-
-Handler::Handler(utility::string_t url, http_listener_config config, SQL_info myDB) : m_listener(url, config){
+Handler::Handler(utility::string_t url, http_listener_config config, SQL_info myDB, 
+    std::vector<utility::string_t> mytable_list) : m_listener(url, config), list(mytable_list){
 
     Connect_maria = mysql_connection_setup(myDB);
     m_listener.support(methods::GET, std::bind(&Handler::handle_get, this, std::placeholders::_1));
@@ -83,10 +82,10 @@ void Handler::handle_post(http_request request){
 
     for(size_t i = 0; i < 6; i++){
         
-        if(j.has_field(U(mytable_list[i]))){
+        if(j.has_field(U(list[i]))){
 
-            key.emplace_back(mytable_list[i]);
-            update_list.emplace_back(j[U(mytable_list[i]]).serialize());
+            key.emplace_back(list[i]);
+            update_list.emplace_back(j[U(list[i]]).serialize());
             update_list.back().erase(0, 1);
             update_list.back().pop_back();
         }
@@ -120,7 +119,7 @@ void Handler::handle_put(http_request request){     //Serialize the json data re
 
     for(size_t i = 0; i < j.size(); i++){
         
-        input_list[i] = j[U(mytable_list[i]]).serialize();
+        input_list[i] = j[U(list[i]]).serialize();
         input_list[i].erase(0, 1);
         input_list[i].pop_back();
     }
