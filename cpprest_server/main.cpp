@@ -10,6 +10,7 @@ void start_server(utility::string_t& url, http_listener_config config, SQL_info 
 }
 
 int main(){
+	
 	http_listener_config listen_config;
 	listen_config.set_ssl_context_callback([](boost::asio::ssl::context &ctx)
 	{
@@ -31,11 +32,11 @@ int main(){
 
 	});
 
-    SQL_info mariaID;
-    mariaID.server = "localhost";
-    mariaID.user = "root";
-    mariaID.password = "root";
-    mariaID.database = "test";
+    	SQL_info mariaID;
+    	mariaID.server = "localhost";
+    	mariaID.user = "root";
+    	mariaID.password = "root";
+    	mariaID.database = "test";
 	
 	std::vector<utility::string_t> mytable_list;
 	mytable_list.emplace_back("id");
@@ -52,5 +53,5 @@ int main(){
 	start_server(url, listen_config, mariaID, mytable_list);
 	while(true);
 	listener->close().wait();
-    return 0;
+    	return 0;
 }
