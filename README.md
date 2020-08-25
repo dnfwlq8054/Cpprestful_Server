@@ -67,7 +67,7 @@ GET request
 
 PUT request
 
-```$ curl -d '{"id":"1", "name":"hwan", "start_year":"2020-08-23", "end_year":"2020-08-23", "img":" ", "text":"test"}' -H "Content-Type: application/json" -X PUT http://localhost:1002```
+```$ curl -d '{"id":"1", "name":"hwan", "start_year":"2020-08-23", "end_year":"2020-08-23", "img":" ", "text":"test"}' -H "Content-Type: application/json" -X PUT http://localhost:10022```
 
 POST request
 
