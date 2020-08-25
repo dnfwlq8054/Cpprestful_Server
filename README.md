@@ -55,18 +55,22 @@ Part Part is ```mariaID``` and elements of ```mytable_list```
 ```$ make```
 
 <p>5. Start server!! </p>
+
 ```$ sudo ./start.exe```
 
 
 Use **curl** for a simple communication check.
 
 GET request
+
 ```$ curl -X GET https://localhost:10022```
 
 PUT request
+
 ```$ curl -d '{"id":"1", "name":"hwan", "start_year":"2020-08-23", "end_year":"2020-08-23", "img":" ", "text":"test"}' -H "Content-Type: application/json" -X PUT http://localhost:1002```
 
 POST request
+
 ```curl -d '{"id":"1", "name":"hwan", "img":" ", "text":"test"}' -H "Content-Type: application/json" -X POST http://localhost:10022```
 
 **Thanks!!**
