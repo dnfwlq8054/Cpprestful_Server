@@ -37,7 +37,7 @@ Install MariaDB
 
 ## How to build my project code.
 
-1. MariaDB service start.
+<p>1. MariaDB service start.</p>
 
 ``` $ service mysql restart```
 
