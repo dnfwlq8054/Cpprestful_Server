@@ -35,7 +35,7 @@ Install MariaDB
 
 ```$ sudo apt-get install libmysqlclient-dev```
 
-### How to build my project code.
+## How to build my project code.
 
 1. MariaDB service start.
 
