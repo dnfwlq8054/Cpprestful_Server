@@ -41,20 +41,20 @@ Install MariaDB
 
 ``` $ service mysql restart```
 
-<p>2. stdafx.hpp compile</p>
+**<p>2. stdafx.hpp compile</p>**
 
 ```$ sudo ./build_hpp.sh```
 
-<p>3. Modify the main.cpp code.</p>
+**<p>3. Modify the main.cpp code.</p>**
 
 In the main.cpp code, you need to set it according to your DB table environment.
 Part Part is ```mariaID``` and elements of ```mytable_list```
 
-<p>4. MakeFile </p>
+**<p>4. MakeFile </p>**
 
 ```$ make```
 
-<p>5. Start server!! </p>
+**<p>5. Start server!! </p>**
 
 ```$ sudo ./start.exe```
 
