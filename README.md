@@ -59,7 +59,7 @@ Part Part is ```mariaID``` and elements of ```mytable_list```
 ```$ sudo ./start.exe```
 
 
-Use **curl** for a simple communication check.
+## Use **curl** for a simple communication check.
 
 GET request
 
