@@ -9,3 +9,13 @@ Here is my sample code. [My samplecode](https://hwan-shell.tistory.com/category/
 
 If you want a reference to cpprestSDK here. [Cpprestful reference](https://microsoft.github.io/cpprestsdk/namespaces.html)
 
+Platfrom : Docker
+OS : Ubuntu 20.04
+Compiler : GCC/G++
+DB : MariaDB
+Code editor : Visual Studio Code
+
+Install cpprestSDK if you want to use that code.
+
+With apt-get on Debian/Ubuntu
+```$ sudo apt-get install libcpprest-dev```
