@@ -10,19 +10,42 @@ If you want a reference to cpprestSDK here. [Cpprestful reference](https://micro
 
 ## The development environment is as follows.
 
-### Platfrom : Docker
+Platfrom : Docker
 
-### OS : Ubuntu 20.04
+OS : Ubuntu 20.04
 
-### Compiler : GCC/G++
+Compiler : GCC/G++
 
-### DB : MariaDB
+DB : MariaDB
 
-### Code editor : Visual Studio Code
+Code editor : Visual Studio Code
 
+
+## Install
 
 Install cpprestSDK if you want to use that code.
 
 With apt-get on Debian/Ubuntu
 
 ```$ sudo apt-get install libcpprest-dev```
+
+Install MariaDB
+
+```$ sudo apt-get install libmariadb-dev```
+
+```$ sudo apt-get install libmysqlclient-dev```
+
+### How to build my project code.
+
+1. MariaDB service start.
+
+``` $ service mysql restart```
+
+2. stdafx.hpp compile
+
+```$ sudo ./build_hpp.sh```
+
+3. Modify the main.cpp code.
+
+In the main.cpp code, you need to set it according to your DB table environment.
+Part Part is ```mariaID``` and elements of ```mytable_list```
