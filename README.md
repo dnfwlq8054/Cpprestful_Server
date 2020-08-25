@@ -1,4 +1,4 @@
-# c++ restful server
+# C++ Restful server
 
 Hi, This code is based on the Microsoft open source project cpprestSDK.
 It works with MariaDB and communicates with the client in a Json way.
