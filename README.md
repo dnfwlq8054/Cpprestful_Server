@@ -10,7 +10,7 @@ If you want a reference to cpprestSDK here. [Cpprestful reference](https://micro
 
 ### The development environment is as follows.
 
-<font color="red">Platfrom</font> : Docker
+<span style="color:red">Platfrom</span> : Docker
 
 OS : Ubuntu 20.04
 
