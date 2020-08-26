@@ -6,7 +6,7 @@ It also supports Https and was created using boost's ssl library. Certificate ge
 
 When making a request to the server in Json, send it as **""(String)**. If you want to process data with a type other than String, modify the code.
 
-**example**
+**Json example**
 
 ```{"id" : 1}``` -> X
 
