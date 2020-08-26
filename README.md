@@ -55,7 +55,7 @@ Install MariaDB
 
 **<p>3. Modify the main.cpp code.</p>**
 
-In the main.cpp code, you need to set it according to your DB table environment.
+In the **main.cpp** code, you need to set it according to your DB table environment.
 
 Part Part is ```mariaID``` and elements of ```mytable_list```
 
