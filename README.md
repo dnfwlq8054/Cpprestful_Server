@@ -73,6 +73,6 @@ PUT request
 
 POST request
 
-```curl -d '{"id":"1", "name":"Hong", "img":" ", "text":"Hello word!!"}' -H "Content-Type: application/json" -X POST http://localhost:10022```
+```$ curl -d '{"id":"1", "name":"Hong", "img":" ", "text":"Hello word!!"}' -H "Content-Type: application/json" -X POST http://localhost:10022```
 
 **Thanks!!**
