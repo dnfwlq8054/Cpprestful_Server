@@ -10,7 +10,7 @@ void start_server(utility::string_t& url, http_listener_config config, SQL_info 
 }
 
 int main(){
-
+	
 	http_listener_config listen_config;
 	listen_config.set_ssl_context_callback([](boost::asio::ssl::context &ctx)
 	{
@@ -29,17 +29,17 @@ int main(){
 		ctx.use_certificate_chain_file("rootca.crt");
 		ctx.use_private_key_file("rootca.key", boost::asio::ssl::context::pem);
 		ctx.use_tmp_dh_file("dh2048.pem");
+
 	});
 
-	SQL_info mariaID;
-	mariaID.server = "localhost";
-	mariaID.user = "root";
-	mariaID.password = "root";
-	mariaID.database = "test";
-	mariaID.table_name = "table1";
+    	SQL_info mariaID;
+    	mariaID.server = "localhost";
+    	mariaID.user = "root";
+    	mariaID.password = "root";
+    	mariaID.database = "test";
 	
 	std::vector<utility::string_t> mytable_list;
-	mytable_list.emplace_back("id");	//private key
+	mytable_list.emplace_back("id");
 	mytable_list.emplace_back("name");
 	mytable_list.emplace_back("start_year");
 	mytable_list.emplace_back("end_year");
@@ -53,5 +53,5 @@ int main(){
 	start_server(url, listen_config, mariaID, mytable_list);
 	while(true);
 	listener->close().wait();
-    return 0;
+   	return 0;
 }

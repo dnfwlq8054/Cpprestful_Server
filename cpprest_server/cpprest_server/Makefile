@@ -12,4 +12,4 @@ rest_handle.o : rest_handle.cpp
 	$(CPP) -c rest_handle.cpp
 
 clean :
-	rm *.o $(TARGET) *.gch
+	rm *.o $(TARGET)

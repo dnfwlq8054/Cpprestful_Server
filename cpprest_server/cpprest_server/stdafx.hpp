@@ -19,7 +19,6 @@ typedef struct connection_details {
     const char *user;
     const char *password;
     const char *database;
-    std::string table_name;
 }SQL_info;
 
 class Handler{
@@ -43,7 +42,6 @@ private:
     http_listener m_listener;
     MYSQL *Connect_maria;
     std::vector<utility::string_t> list;
-    const std::string table_name;
 };
 
 
