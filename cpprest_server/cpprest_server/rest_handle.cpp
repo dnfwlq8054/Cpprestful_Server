@@ -1,7 +1,7 @@
 #include "stdafx.hpp"
 
 Handler::Handler(utility::string_t url, http_listener_config config, SQL_info myDB, 
-    std::vector<utility::string_t> mytable_list) : m_listener(url, config), list(mytable_list), table_name(myDB.table_name){
+    std::vector<utility::string_t> mytable_list) : m_listener(url, config), list(mytable_list){
 
     Connect_maria = mysql_connection_setup(myDB);
     m_listener.support(methods::GET, std::bind(&Handler::handle_get, this, std::placeholders::_1));
@@ -45,7 +45,7 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
     MYSQL_RES *res;
     MYSQL_ROW row;
     
-    std::string select_cmd = "select * from " + table_name;
+    std::string select_cmd = "select * from table1";
     res = mysql_perform_query(Connect_maria, select_cmd, request);
     if(res == NULL) return;
 
@@ -66,30 +66,13 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
 	mysql_free_result(res);
 }
 
-void Handler::handle_del(http_request request){     //DB Delete Request
+void Handler::handle_del(http_request request){
     
-std::cout << "handle_del request" << std::endl;
-
-    std::string key = list[0];
-    auto j = request.extract_json().get(); 
-    std::string id = j[U(key)].serialize();
-    id.erase(0, 1);
-    id.pop_back();
-
-    std::string delete_cmd = "DELETE FROM " + table_name + " WHERE " + key + " = " + id + ";";
-    if(!mysql_query(Connect_maria, delete_cmd.c_str())){
-    
-        std::cout << "database DELETE complete" << std::endl;
-    	request.reply(status_codes::OK, U("DELETE complete"));           
-
-    } else {
-
-        printf("MYSQL query error : %s\n", mysql_error(Connect_maria));
-        request.reply(status_codes::OK, U("Database DELETE failed."));
-    }
+    std::cout << request.to_string() << std::endl;
+    request.reply(status_codes::OK); 
 }
 
-void Handler::handle_post(http_request request){    //DB Update Request
+void Handler::handle_post(http_request request){
 
     std::cout << "handle_put request" << std::endl;
 
@@ -108,7 +91,7 @@ void Handler::handle_post(http_request request){    //DB Update Request
         }
     }
 
-    std::string update_cmd = "UPDATE " + table_name + " SET ";
+    std::string update_cmd = "UPDATE table1 SET ";
     for(size_t i = 1; i < key.size(); i++)
         update_cmd += key[i] + " = " + "'" + update_list[i] + "', ";
     
@@ -141,13 +124,13 @@ void Handler::handle_put(http_request request){     //Serialize the json data re
         input_list[i].pop_back();
     }
 
-    std::string insert_cmd = "INSERT INTO " + table_name + "(id, name, start_year, end_year, img, text) VALUES (" + input_list[0]+ ",";
+    std::string insert_cmd = "INSERT INTO table1(id, name, start_year, end_year, img, text) VALUES (" + input_list[0]+ ",";
     for(size_t i = 1; i < list.size(); i++)
         insert_cmd += "'" + input_list[i] + "', ";
 
     insert_cmd.pop_back(); insert_cmd.pop_back();
     insert_cmd += ")";
-
+    
     if(!mysql_query(Connect_maria, insert_cmd.c_str())){
     
         std::cout << "database insert complete" << std::endl;
