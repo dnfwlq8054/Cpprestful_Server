@@ -70,7 +70,7 @@ Part Part is ```mariaID``` and elements of ```mytable_list```
 
 ## Use **curl** for a simple communication check.
 
-If you are working with curl, use http for the server.
+If you are working with curl, use **http** for the server.
 
 GET request
 
