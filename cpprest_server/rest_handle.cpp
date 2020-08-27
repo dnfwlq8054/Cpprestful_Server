@@ -97,7 +97,7 @@ void Handler::handle_post(http_request request){    //DB Update Request
     std::vector<std::string> key;
     auto j = request.extract_json().get(); 
 
-    for(size_t i = 0; i < 6; i++){
+    for(size_t i = 0; i < 6; i++){      //Key extraction from Json.
         
         if(j.has_field(U(list[i]))){
 
