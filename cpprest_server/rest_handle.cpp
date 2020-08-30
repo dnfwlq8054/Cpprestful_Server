@@ -89,7 +89,7 @@ std::cout << "handle_del request" << std::endl;
     }
 }
 
-void Handler::handle_post(http_request request){    //DB Update Request
+void Handler::handle_put(http_request request){    //DB Update Request
 
     std::cout << "handle_put request" << std::endl;
 
@@ -127,9 +127,9 @@ void Handler::handle_post(http_request request){    //DB Update Request
     }
 }
 
-void Handler::handle_put(http_request request){     //Serialize the json data received at the time of PUT request.
+void Handler::handle_post(http_request request){     //Serialize the json data received at the time of post request.
     
-    std::cout << "handle_put request" << std::endl;
+    std::cout << "handle_post request" << std::endl;
    
     std::vector<std::string> input_list(list.size());
     auto j = request.extract_json().get();
