@@ -51,7 +51,7 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
 
     while((row = mysql_fetch_row(res)) != NULL){    
 
-        std::string s = std::to_string(i); i++;
+        std::string s = std::to_string(i++);
         j[U("id")] = json::value::string(row[0]);
         j[U("name")] = json::value::string(row[1]);
         j[U("start_year")] = json::value::string(row[2]);
