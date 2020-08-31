@@ -74,7 +74,7 @@ If you are working with curl, use **http** for the server.
 
 GET request
 
-```$ curl -X GET https://localhost:10022```
+```$ curl -X GET http://localhost:10022```
 
 POST request
 
