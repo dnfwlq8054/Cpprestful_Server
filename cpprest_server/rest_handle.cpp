@@ -77,16 +77,11 @@ std::cout << "handle_del request" << std::endl;
     id.pop_back();
 
     std::string delete_cmd = "DELETE FROM " + table_name + " WHERE " + key + " = " + id + ";";
-    if(!mysql_query(Connect_maria, delete_cmd.c_str())){
+    if(NULL != mysql_perform_query(Connect_maria, delete_cmd.c_str(), request, "Database DELETE failed.")){
     
         std::cout << "database DELETE complete" << std::endl;
     	request.reply(status_codes::OK, U("DELETE complete"));           
-
-    } else {
-
-        printf("MYSQL query error : %s\n", mysql_error(Connect_maria));
-        request.reply(status_codes::OK, U("Database DELETE failed."));
-    }
+    } 
 }
 
 void Handler::handle_put(http_request request){    //DB Update Request
@@ -143,14 +138,9 @@ void Handler::handle_post(http_request request){     //Serialize the json data r
     insert_cmd.pop_back(); insert_cmd.pop_back();
     insert_cmd += ")";
 
-    if(!mysql_query(Connect_maria, insert_cmd.c_str())){
+    if(NULL != mysql_perform_query(Connect_maria, insert_cmd.c_str(), request, "This is duplicate data.")){
     
         std::cout << "database insert complete" << std::endl;
     	request.reply(status_codes::OK, U("insert complete"));                     
-
-    } else {
-
-        printf("MYSQL query error : %s\n", mysql_error(Connect_maria));
-        request.reply(status_codes::OK, U("This is duplicate data."));
     }
 }
