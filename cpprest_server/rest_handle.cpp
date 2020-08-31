@@ -77,6 +77,7 @@ std::cout << "handle_del request" << std::endl;
     id.pop_back();
 
     std::string delete_cmd = "DELETE FROM " + table_name + " WHERE " + key + " = " + id + ";";
+    
     if(NULL != mysql_perform_query(Connect_maria, delete_cmd.c_str(), request, "Database DELETE failed.")){
     
         std::cout << "database DELETE complete" << std::endl;
