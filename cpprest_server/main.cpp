@@ -36,7 +36,7 @@ int main(){
 	mariaID.user = "root";
 	mariaID.password = "root";
 	mariaID.database = "test";
-	mariaID.table_name = "table1";
+	mariaID.table_name = "table1xx";
 	
 	std::vector<utility::string_t> mytable_list;
 	mytable_list.emplace_back("id");	//private key

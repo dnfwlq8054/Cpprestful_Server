@@ -23,12 +23,12 @@ MYSQL* Handler::mysql_connection_setup(SQL_info myDB){  //DB connection
     return connection;
 }
 
-MYSQL_RES* Handler::mysql_perform_query(MYSQL *connection, std::string select_cmd, http_request req) {
+MYSQL_RES* Handler::mysql_perform_query(MYSQL *connection, std::string select_cmd, http_request req, std::string error_msg) {
  
     if(mysql_query(connection, select_cmd.c_str())) {   //DB connection error handler
         
         printf("MYSQL query error : %s\n", mysql_error(connection)); 
-        req.reply(status_codes::OK, U("mysql error")); 
+        req.reply(status_codes::BadRequest, U(error_msg.c_str())); 
         return NULL;
     }
     
@@ -39,19 +39,19 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
     
     std::cout << "handle_get request" << std::endl;
 
-    int i = 1;
+    int index = 1;
     auto j = json::value::object();
     json::value j_list;
     MYSQL_RES *res;
     MYSQL_ROW row;
     
     std::string select_cmd = "select * from " + table_name;
-    res = mysql_perform_query(Connect_maria, select_cmd, request);
+    res = mysql_perform_query(Connect_maria, select_cmd, request, "Failed to GET data.");
     if(res == NULL) return;
 
     while((row = mysql_fetch_row(res)) != NULL){    
 
-        std::string s = std::to_string(i++);
+        std::string s = std::to_string(index++);
         j[U("id")] = json::value::string(row[0]);
         j[U("name")] = json::value::string(row[1]);
         j[U("start_year")] = json::value::string(row[2]);
@@ -115,15 +115,10 @@ void Handler::handle_put(http_request request){    //DB Update Request
     update_cmd.pop_back(); update_cmd.pop_back();
     update_cmd += " WHERE " + key[0] + " = " + update_list[0];
 
-    if(!mysql_query(Connect_maria, update_cmd.c_str())){
+    if(NULL != mysql_perform_query(Connect_maria, update_cmd.c_str(), request, "Database modification failed.")){
     
         std::cout << "database update complete" << std::endl;
     	request.reply(status_codes::OK, U("update complete"));           
-
-    } else {
-
-        printf("MYSQL query error : %s\n", mysql_error(Connect_maria));
-        request.reply(status_codes::OK, U("Database modification failed."));
     }
 }
 
