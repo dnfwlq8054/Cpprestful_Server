@@ -58,7 +58,6 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
         j[U("end_year")] = json::value::string(row[3]);
         j[U("img")] = json::value::string(row[4]);
         j[U("text")] = json::value::string(row[5]);
-        printf("%s %s %s %s %s %s\n", row[0], row[1], row[2], row[3], row[4], row[5]);
         j_list[U(s.c_str())] = j;
     }
 
