@@ -23,16 +23,26 @@ MYSQL* Handler::mysql_connection_setup(SQL_info myDB){  //DB connection
     return connection;
 }
 
-MYSQL_RES* Handler::mysql_perform_query(MYSQL *connection, std::string select_cmd, http_request req, std::string error_msg) {
+MYSQL_RES* Handler::mysql_perform_query_select(MYSQL *connection, std::string select_cmd, http_request& req, std::string error_msg) {
  
     if(mysql_query(connection, select_cmd.c_str())) {   //DB connection error handler
-        
         printf("MYSQL query error : %s\n", mysql_error(connection)); 
         req.reply(status_codes::BadRequest, U(error_msg.c_str())); 
         return NULL;
     }
-    
+        
     return mysql_use_result(connection);
+}
+
+bool Handler::mysql_perform_query_input(MYSQL *connection, std::string select_cmd, http_request& req, std::string error_msg) {
+ 
+    if(mysql_query(connection, select_cmd.c_str())) {   //DB connection error handler
+        printf("MYSQL query error : %s\n", mysql_error(connection)); 
+        req.reply(status_codes::BadRequest, U(error_msg.c_str())); 
+        return false;
+    }
+        
+    return true;
 }
 
 void Handler::handle_get(http_request request){     //Processing as json data when requesting GET.
@@ -46,7 +56,7 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
     MYSQL_ROW row;
     
     std::string select_cmd = "select * from " + table_name;
-    res = mysql_perform_query(Connect_maria, select_cmd, request, "Failed to GET data.");
+    res = mysql_perform_query_select(Connect_maria, select_cmd, request, "Failed to GET data.");
     if(res == NULL) return;
 
     while((row = mysql_fetch_row(res)) != NULL){    
@@ -77,7 +87,7 @@ std::cout << "handle_del request" << std::endl;
 
     std::string delete_cmd = "DELETE FROM " + table_name + " WHERE " + key + " = " + id + ";";
     
-    if(NULL != mysql_perform_query(Connect_maria, delete_cmd.c_str(), request, "Database DELETE failed.")){
+    if(mysql_perform_query_input(Connect_maria, delete_cmd.c_str(), request, "Database DELETE failed.")){
     
         std::cout << "database DELETE complete" << std::endl;
     	request.reply(status_codes::OK, U("DELETE complete"));           
@@ -110,7 +120,7 @@ void Handler::handle_put(http_request request){    //DB Update Request
     update_cmd.pop_back(); update_cmd.pop_back();
     update_cmd += " WHERE " + key[0] + " = " + update_list[0];
 
-    if(NULL != mysql_perform_query(Connect_maria, update_cmd.c_str(), request, "Database modification failed.")){
+    if(mysql_perform_query_input(Connect_maria, update_cmd.c_str(), request, "Database modification failed.")){
     
         std::cout << "database update complete" << std::endl;
     	request.reply(status_codes::OK, U("update complete"));           
@@ -138,9 +148,10 @@ void Handler::handle_post(http_request request){     //Serialize the json data r
     insert_cmd.pop_back(); insert_cmd.pop_back();
     insert_cmd += ")";
 
-    if(NULL != mysql_perform_query(Connect_maria, insert_cmd.c_str(), request, "This is duplicate data.")){
-    
+    if(mysql_perform_query_input(Connect_maria, insert_cmd.c_str(), request, "This is duplicate data.")){
+
         std::cout << "database insert complete" << std::endl;
     	request.reply(status_codes::OK, U("insert complete"));                     
-    }
+    }else
+        std::cout << "fail" << std::endl;
 }
