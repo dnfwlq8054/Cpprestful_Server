@@ -38,7 +38,7 @@ int main(){
 	mariaID.database = "test";
 	mariaID.table_name = "table1";
 	
-	std::vector<utility::string_t> mytable_list;
+	std::vector<std::string> mytable_list;
 	mytable_list.emplace_back("id");	//private key
 	mytable_list.emplace_back("name");
 	mytable_list.emplace_back("start_year");

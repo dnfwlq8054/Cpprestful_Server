@@ -37,13 +37,13 @@ private:
     void handle_post(http_request request);
     void handle_del(http_request request);
     MYSQL* mysql_connection_setup(SQL_info myDB);
-    MYSQL_RES* mysql_perform_query_select(MYSQL *connection, std::string select_cmd, http_request& req, std::string error_msg);
-    bool mysql_perform_query_input(MYSQL *connection, std::string select_cmd, http_request& req, std::string error_msg);
+    MYSQL_RES* mysql_perform_query_select(MYSQL *connection, std::string select_cmd, http_request& req, utility::string_t error_msg);
+    bool mysql_perform_query_input(MYSQL *connection, std::string select_cmd, http_request& req, utility::string_t error_msg);
 
 private:
     http_listener m_listener;
     MYSQL *Connect_maria;
-    std::vector<utility::string_t> list;
+    std::vector<std::string> list;
     const std::string table_name;
 };
 

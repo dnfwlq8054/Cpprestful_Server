@@ -23,22 +23,23 @@ MYSQL* Handler::mysql_connection_setup(SQL_info myDB){  //DB connection
     return connection;
 }
 
-MYSQL_RES* Handler::mysql_perform_query_select(MYSQL *connection, std::string select_cmd, http_request& req, std::string error_msg) {
+MYSQL_RES* Handler::mysql_perform_query_select(MYSQL *connection, std::string select_cmd, http_request& req, utility::string_t error_msg) {
  
     if(mysql_query(connection, select_cmd.c_str())) {   //DB connection error handler
+
         printf("MYSQL query error : %s\n", mysql_error(connection)); 
-        req.reply(status_codes::BadRequest, U(error_msg.c_str())); 
+        req.reply(status_codes::BadRequest, U(error_msg)); 
         return NULL;
     }
         
     return mysql_use_result(connection);
 }
 
-bool Handler::mysql_perform_query_input(MYSQL *connection, std::string select_cmd, http_request& req, std::string error_msg) {
+bool Handler::mysql_perform_query_input(MYSQL *connection, std::string select_cmd, http_request& req, utility::string_t error_msg) {
  
     if(mysql_query(connection, select_cmd.c_str())) {   //DB connection error handler
         printf("MYSQL query error : %s\n", mysql_error(connection)); 
-        req.reply(status_codes::BadRequest, U(error_msg.c_str())); 
+        req.reply(status_codes::BadRequest, U(error_msg)); 
         return false;
     }
         
@@ -61,14 +62,11 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
 
     while((row = mysql_fetch_row(res)) != NULL){    
 
-        std::string s = std::to_string(index++);
-        j[U("id")] = json::value::string(row[0]);
-        j[U("name")] = json::value::string(row[1]);
-        j[U("start_year")] = json::value::string(row[2]);
-        j[U("end_year")] = json::value::string(row[3]);
-        j[U("img")] = json::value::string(row[4]);
-        j[U("text")] = json::value::string(row[5]);
-        j_list[U(s.c_str())] = j;
+        utility::string_t key = std::to_string(index++);
+        for(size_t i = 0; i < list.size(); i++)
+            j[U(list[i])] = json::value::string(row[i]);
+        
+        j_list[U(key)] = j;
     }
 
 	request.reply(status_codes::OK, j_list);                     
@@ -81,9 +79,10 @@ std::cout << "handle_del request" << std::endl;
 
     std::string key = list[0];
     auto j = request.extract_json().get(); 
+    
     std::string id = j[U(key)].serialize();
-    id.erase(0, 1);
-    id.pop_back();
+    id.erase(remove(id.begin(), id.end(), '"'), id.end());     //"" erase
+    
 
     std::string delete_cmd = "DELETE FROM " + table_name + " WHERE " + key + " = " + id + ";";
     
@@ -99,26 +98,28 @@ void Handler::handle_put(http_request request){    //DB Update Request
     std::cout << "handle_put request" << std::endl;
 
     std::vector<std::string> update_list;
-    std::vector<std::string> key;
+    std::vector<std::string> key_list;
+    update_list.reserve(list.size()); key_list.reserve(list.size());
+    
     auto j = request.extract_json().get(); 
 
-    for(size_t i = 0; i < 6; i++){      //Key extraction from Json.
+    for(size_t i = 0; i < list.size(); i++){      //Key extraction from Json.
         
-        if(j.has_field(U(list[i]))){
+        if(j.has_field(U(list[i]))){    //key find
 
-            key.emplace_back(list[i]);
-            update_list.emplace_back(j[U(list[i]]).serialize());
-            update_list.back().erase(0, 1);
-            update_list.back().pop_back();
+            key_list.emplace_back(list[i]);
+            std::string element = j[U(list[i])].serialize();
+            element.erase(std::remove(element.begin(), element.end(), '"'), element.end());
+            update_list.emplace_back(element);
         }
     }
 
     std::string update_cmd = "UPDATE " + table_name + " SET ";
-    for(size_t i = 1; i < key.size(); i++)
-        update_cmd += key[i] + " = " + "'" + update_list[i] + "', ";
+    for(size_t i = 1; i < key_list.size(); i++)
+        update_cmd += key_list[i] + " = " + "'" + update_list[i] + "', ";
     
     update_cmd.pop_back(); update_cmd.pop_back();
-    update_cmd += " WHERE " + key[0] + " = " + update_list[0];
+    update_cmd += " WHERE " + key_list[0] + " = " + update_list[0];
 
     if(mysql_perform_query_input(Connect_maria, update_cmd.c_str(), request, "Database modification failed.")){
     
@@ -131,14 +132,16 @@ void Handler::handle_post(http_request request){     //Serialize the json data r
     
     std::cout << "handle_post request" << std::endl;
    
-    std::vector<std::string> input_list(list.size());
+    std::vector<std::string> input_list;
+    input_list.reserve(list.size());
+
     auto j = request.extract_json().get();
 
-    for(size_t i = 0; i < j.size(); i++){
-        
-        input_list[i] = j[U(list[i]]).serialize();
-        input_list[i].erase(0, 1);
-        input_list[i].pop_back();
+    for(size_t i = 0; i < list.size(); i++){
+
+        std::string element = j[U(list[i]]).serialize();
+        element.erase(std::remove(element.begin(), element.end(), '"'), element.end());
+        input_list.emplace_back(element);
     }
 
     std::string insert_cmd = "INSERT INTO " + table_name + "(id, name, start_year, end_year, img, text) VALUES (" + input_list[0]+ ",";
@@ -148,7 +151,7 @@ void Handler::handle_post(http_request request){     //Serialize the json data r
     insert_cmd.pop_back(); insert_cmd.pop_back();
     insert_cmd += ")";
 
-    if(mysql_perform_query_input(Connect_maria, insert_cmd.c_str(), request, "This is duplicate data.")){
+    if(mysql_perform_query_input(Connect_maria, insert_cmd.c_str(), request, "This is duplicate data. (fail)")){
 
         std::cout << "database insert complete" << std::endl;
     	request.reply(status_codes::OK, U("insert complete"));                     
