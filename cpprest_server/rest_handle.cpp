@@ -38,7 +38,8 @@ MYSQL_RES* Handler::mysql_perform_query_select(MYSQL *connection, std::string se
 bool Handler::mysql_perform_query_input(MYSQL *connection, std::string select_cmd, http_request& req, utility::string_t error_msg) {
  
     if(mysql_query(connection, select_cmd.c_str())) {   //DB connection error handler
-        printf("MYSQL query error : %s\n", mysql_error(connection)); 
+        
+	printf("MYSQL query error : %s\n", mysql_error(connection)); 
         req.reply(status_codes::BadRequest, U(error_msg)); 
         return false;
     }
