@@ -1,5 +1,7 @@
 #include "stdafx.hpp"
 
+// main.cpp in mytable_list -> table_Structure
+
 Handler::Handler(utility::string_t url, http_listener_config config, SQL_info myDB, 
     std::vector<utility::string_t> mytable_list) : m_listener(url, config), table_Structure(mytable_list), table_name(myDB.table_name){
 
@@ -87,7 +89,7 @@ void Handler::handle_del(http_request request){     //DB Delete Request
     std::string key = table_Structure[0];
     auto j = request.extract_json().get(); 
     
-    std::string id = j[U(key)].serialize();
+    std::string id = j[U(key)].serialize();     ////Get json data 
     check_String(id);      // ', " erase..... sql injection prevention
     
 
@@ -117,11 +119,10 @@ void Handler::handle_put(http_request request){    //DB Update Request
         if(j.has_field(U(table_Structure[i]))){    //key find
 
             key_list.emplace_back(table_Structure[i]);
-            std::string element = j[U(table_Structure[i])].serialize();
-            element += "'";
-            std::cout << "Data before modification... : " << element << std::endl;
+
+            std::string element = j[U(table_Structure[i])].serialize(); //Get json data 
             check_String(element);      // ', " erase..... sql injection prevention
-            std::cout << "Data after modification... : " << element << std::endl;
+
             update_list.emplace_back(element);
         }
     }
@@ -151,8 +152,9 @@ void Handler::handle_post(http_request request){     //Serialize the json data r
 
     for(size_t i = 0; i < table_Structure.size(); i++){
 
-        std::string element = j[U(table_Structure[i]]).serialize();
+        std::string element = j[U(table_Structure[i]]).serialize();     ////Get json data 
         check_String(element);      // ', " erase..... sql injection prevention
+
         input_list.emplace_back(element);
     }
 
