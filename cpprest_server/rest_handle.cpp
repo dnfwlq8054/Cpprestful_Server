@@ -1,7 +1,7 @@
 #include "stdafx.hpp"
 
 Handler::Handler(utility::string_t url, http_listener_config config, SQL_info myDB, 
-    std::vector<utility::string_t> mytable_list) : m_listener(url, config), list(mytable_list), table_name(myDB.table_name){
+    std::vector<utility::string_t> mytable_list) : m_listener(url, config), table_Structure(mytable_list), table_name(myDB.table_name){
 
     Connect_maria = mysql_connection_setup(myDB);
     m_listener.support(methods::GET, std::bind(&Handler::handle_get, this, std::placeholders::_1));
@@ -47,6 +47,12 @@ bool Handler::mysql_perform_query_input(MYSQL *connection, std::string select_cm
     return true;
 }
 
+void check_String(std::string& data){
+    
+    data.erase(std::remove(data.begin(), data.end(), '"'), data.end());
+    data.erase(std::remove(data.begin(), data.end(), '\''), data.end());
+}
+
 void Handler::handle_get(http_request request){     //Processing as json data when requesting GET.
     
     std::cout << "handle_get request" << std::endl;
@@ -64,8 +70,8 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
     while((row = mysql_fetch_row(res)) != NULL){    
 
         utility::string_t key = std::to_string(index++);
-        for(size_t i = 0; i < list.size(); i++)
-            j[U(list[i])] = json::value::string(row[i]);
+        for(size_t i = 0; i < table_Structure.size(); i++)
+            j[U(table_Structure[i])] = json::value::string(row[i]);
         
         j_list[U(key)] = j;
     }
@@ -76,13 +82,13 @@ void Handler::handle_get(http_request request){     //Processing as json data wh
 
 void Handler::handle_del(http_request request){     //DB Delete Request
     
-std::cout << "handle_del request" << std::endl;
+    std::cout << "handle_del request" << std::endl;
 
-    std::string key = list[0];
+    std::string key = table_Structure[0];
     auto j = request.extract_json().get(); 
     
     std::string id = j[U(key)].serialize();
-    id.erase(remove(id.begin(), id.end(), '"'), id.end());     //"" erase
+    check_String(id);      // ', " erase..... sql injection prevention
     
 
     std::string delete_cmd = "DELETE FROM " + table_name + " WHERE " + key + " = " + id + ";";
@@ -100,17 +106,22 @@ void Handler::handle_put(http_request request){    //DB Update Request
 
     std::vector<std::string> update_list;
     std::vector<std::string> key_list;
-    update_list.reserve(list.size()); key_list.reserve(list.size());
+
+    update_list.reserve(table_Structure.size()); 
+    key_list.reserve(table_Structure.size());
     
     auto j = request.extract_json().get(); 
 
-    for(size_t i = 0; i < list.size(); i++){      //Key extraction from Json.
+    for(size_t i = 0; i < table_Structure.size(); i++){      //Key extraction from Json.
         
-        if(j.has_field(U(list[i]))){    //key find
+        if(j.has_field(U(table_Structure[i]))){    //key find
 
-            key_list.emplace_back(list[i]);
-            std::string element = j[U(list[i])].serialize();
-            element.erase(std::remove(element.begin(), element.end(), '"'), element.end());
+            key_list.emplace_back(table_Structure[i]);
+            std::string element = j[U(table_Structure[i])].serialize();
+            element += "'";
+            std::cout << "Data before modification... : " << element << std::endl;
+            check_String(element);      // ', " erase..... sql injection prevention
+            std::cout << "Data after modification... : " << element << std::endl;
             update_list.emplace_back(element);
         }
     }
@@ -134,19 +145,19 @@ void Handler::handle_post(http_request request){     //Serialize the json data r
     std::cout << "handle_post request" << std::endl;
    
     std::vector<std::string> input_list;
-    input_list.reserve(list.size());
+    input_list.reserve(table_Structure.size());
 
     auto j = request.extract_json().get();
 
-    for(size_t i = 0; i < list.size(); i++){
+    for(size_t i = 0; i < table_Structure.size(); i++){
 
-        std::string element = j[U(list[i]]).serialize();
-        element.erase(std::remove(element.begin(), element.end(), '"'), element.end());
+        std::string element = j[U(table_Structure[i]]).serialize();
+        check_String(element);      // ', " erase..... sql injection prevention
         input_list.emplace_back(element);
     }
 
     std::string insert_cmd = "INSERT INTO " + table_name + "(id, name, start_year, end_year, img, text) VALUES (" + input_list[0]+ ",";
-    for(size_t i = 1; i < list.size(); i++)
+    for(size_t i = 1; i < table_Structure.size(); i++)
         insert_cmd += "'" + input_list[i] + "', ";
 
     insert_cmd.pop_back(); insert_cmd.pop_back();

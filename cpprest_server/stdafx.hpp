@@ -43,7 +43,7 @@ private:
 private:
     http_listener m_listener;
     MYSQL *Connect_maria;
-    std::vector<std::string> list;
+    std::vector<std::string> table_Structure;
     const std::string table_name;
 };
 
