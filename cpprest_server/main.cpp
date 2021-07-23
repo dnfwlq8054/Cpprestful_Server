@@ -2,7 +2,7 @@
 
 std::unique_ptr<Handler> listener;
 
-void start_server(utility::string_t& url, http_listener_config config, SQL_info myDB, std::vector<utility::string_t>& mytable_list){
+void start_server(utility::string_t& url, http_listener_config config, SQL_Info myDB, std::vector<utility::string_t>& mytable_list){
 
 	listener = std::unique_ptr<Handler>(new Handler(url, config, myDB, mytable_list));
 	std::cout << "start server" << std::endl;
@@ -31,7 +31,7 @@ int main(){
 		ctx.use_tmp_dh_file("dh2048.pem");
 	});
 
-	SQL_info mariaID;
+	SQL_Info mariaID;
 	mariaID.server = "localhost";
 	mariaID.user = "root";
 	mariaID.password = "root";
