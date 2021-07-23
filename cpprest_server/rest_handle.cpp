@@ -2,7 +2,7 @@
 
 // main.cpp in mytable_list -> table_Structure
 
-Handler::Handler(utility::string_t url, http_listener_config config, SQL_info myDB, 
+Handler::Handler(utility::string_t url, http_listener_config config, SQL_Info myDB, 
     std::vector<utility::string_t> mytable_list) : m_listener(url, config), table_Structure(mytable_list), table_name(myDB.table_name){
 
     Connect_maria = mysql_connection_setup(myDB);
@@ -12,7 +12,7 @@ Handler::Handler(utility::string_t url, http_listener_config config, SQL_info my
     m_listener.support(methods::DEL, std::bind(&Handler::handle_del, this, std::placeholders::_1));
 }
 
-MYSQL* Handler::mysql_connection_setup(SQL_info myDB){  //DB connection
+MYSQL* Handler::mysql_connection_setup(SQL_Info myDB){  //DB connection
 
     MYSQL *connection = mysql_init(NULL);
  
